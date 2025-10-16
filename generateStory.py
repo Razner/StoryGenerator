@@ -56,9 +56,11 @@ def sauvegarder_histoire_ui(prenom, age, style, histoire):
     if not histoire.strip():
         messagebox.showwarning("Attention", "Aucune histoire à sauvegarder !")
         return
-    fichier = manager.sauvegarder_histoire(prenom, age, style, histoire)
-    dernier_fichier = fichier
-    messagebox.showinfo("Succès", f"Histoire sauvegardée : {fichier}")
+    chemin = manager.sauvegarder_histoire(prenom, age, style, histoire)
+    # garder uniquement le nom sans dossier et sans extension
+    dernier_fichier = os.path.splitext(os.path.basename(chemin))[0]
+    messagebox.showinfo("Succès", f"Histoire sauvegardée : {dernier_fichier}")
+
 
 def voir_histoires_ui():
     histoires = manager.lister_histoires()
@@ -108,6 +110,7 @@ def toggle_favoris_ui(fichier):
         manager.ajouter_favori(fichier)
         messagebox.showinfo("Favoris", f"Ajouté aux favoris : {fichier}")
 
+
 def voir_favoris_ui():
     favoris = manager.lister_favoris()
     if not favoris:
@@ -118,16 +121,13 @@ def voir_favoris_ui():
     fenetre.title("Favoris")
     fenetre.geometry("400x300")
 
-    # Scrollbar si beaucoup de favoris
     canvas = tk.Canvas(fenetre)
     scrollbar = ttk.Scrollbar(fenetre, orient="vertical", command=canvas.yview)
     scrollable_frame = ttk.Frame(canvas)
 
     scrollable_frame.bind(
         "<Configure>",
-        lambda e: canvas.configure(
-            scrollregion=canvas.bbox("all")
-        )
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
     )
 
     canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
@@ -136,10 +136,11 @@ def voir_favoris_ui():
     canvas.pack(side="left", fill="both", expand=True)
     scrollbar.pack(side="right", fill="y")
 
-    # Ajouter chaque favori avec bouton Retirer
     for i, fav in enumerate(favoris):
-        ttk.Label(scrollable_frame, text=fav, wraplength=250).grid(row=i, column=0, sticky="w", padx=5, pady=2)
-        ttk.Button(scrollable_frame, text="Retirer", command=lambda f=fav: retirer_favori_ui(f, fenetre)).grid(row=i, column=1, padx=5, pady=2)
+        ttk.Label(scrollable_frame, text=fav, wraplength=200).grid(row=i, column=0, sticky="w", padx=5, pady=2)
+        ttk.Button(scrollable_frame, text="Lire", command=lambda f=fav: lire_histoire_ui(f)).grid(row=i, column=1, padx=5, pady=2)
+        ttk.Button(scrollable_frame, text="Retirer", command=lambda f=fav: retirer_favori_ui(f, fenetre)).grid(row=i, column=2, padx=5, pady=2)
+
 
 def retirer_favori_ui(fichier, fenetre):
     manager.retirer_favori(fichier)

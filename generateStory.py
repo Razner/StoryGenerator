@@ -4,6 +4,7 @@ import json
 import requests
 import threading
 from save_manager import SaveManager
+import os
 
 manager = SaveManager()
 
@@ -72,6 +73,7 @@ def voir_histoires_ui():
     for i, h in enumerate(histoires):
         ttk.Label(fenetre, text=h).grid(row=i, column=0, sticky="w", padx=5, pady=2)
         ttk.Button(fenetre, text="Lire", command=lambda nom=h: lire_histoire_ui(nom)).grid(row=i, column=1, padx=5, pady=2)
+        ttk.Button(fenetre, text="Retirer", command=lambda nom=h: retirer_histoire_ui(nom, fenetre)).grid(row=i, column=2, padx=5, pady=2)
 
 def lire_histoire_ui(nom):
     texte = manager.lire_histoire(nom)
@@ -80,6 +82,18 @@ def lire_histoire_ui(nom):
     text_box = tk.Text(fenetre, wrap="word")
     text_box.pack(expand=True, fill="both")
     text_box.insert(tk.END, texte)
+
+def retirer_histoire_ui(nom, fenetre):
+    # Supprimer le fichier du disque
+    chemin = os.path.join(manager.dossier, nom + ".txt")
+    if os.path.exists(chemin):
+        os.remove(chemin)
+        messagebox.showinfo("Histoires", f"Histoire supprimée : {nom}")
+    else:
+        messagebox.showwarning("Histoires", f"Histoire introuvable : {nom}")
+
+    fenetre.destroy()  # Fermer la fenêtre
+    voir_histoires_ui()  # Réouvrir pour mettre à jour la liste
 
 
 

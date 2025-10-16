@@ -27,7 +27,7 @@ class SaveManager:
 
     def lister_histoires(self):
         fichiers = sorted(os.listdir(self.dossier))
-        return [os.path.splitext(f)[0] for f in fichiers]
+        return [os.path.splitext(f)[0] for f in fichiers if f.endswith(".txt")]
 
     def lire_histoire(self, nom):
         chemin = os.path.join(self.dossier, nom + ".txt")

@@ -53,9 +53,9 @@ def monitor_two(pid1: int, pid2: int, name1: str, name2: str, duration: int = 60
     print("-" * sep_len)
     # En-tête du tableau coloré par cible
     print(
-        f"{'temps_s':>7} | {'P(W)':>7} | {'deltaE_tot(J)':>14} | "
-        f"{BLEU}{'part1':>7} | {'deltaE1(J)':>12} | {'CPU1(%)':>9}{RESET} | "
-        f"{JAUNE}{'part2':>7} | {'deltaE2(J)':>12} | {'CPU2(%)':>9}{RESET}"
+        f"{'temps_s':>7} | {'P(W)':>7} | {'deltaEnergy_tot(J)':>14} | "
+        f"{BLEU}{'part1':>7} | {'deltaEnergy1(J)':>12} | {'CPU1(%)':>9}{RESET} | "
+        f"{JAUNE}{'part2':>7} | {'deltaEnergy2(J)':>12} | {'CPU2(%)':>9}{RESET}"
     )
     print("-" * sep_len)
 
@@ -64,12 +64,12 @@ def monitor_two(pid1: int, pid2: int, name1: str, name2: str, duration: int = 60
     try:
         proc1_active_prev = proc_cpu_times_active(proc1)
     except psutil.Error:
-        print("Erreur : impossible de lire les temps CPU du processus 1.")
+        print("Erreur : impossible de lire les temps CPU du processus 1")
         return
     try:
         proc2_active_prev = proc_cpu_times_active(proc2)
     except psutil.Error:
-        print("Erreur : impossible de lire les temps CPU du processus 2.")
+        print("Erreur : impossible de lire les temps CPU du processus 2")
         return
 
     energy1_j = 0.0
@@ -144,28 +144,23 @@ def monitor_two(pid1: int, pid2: int, name1: str, name2: str, duration: int = 60
     print(f"{JAUNE}Énergie attribuée à {name2} : {energy2_j/3600:.6f} Wh{RESET}\n\n\n")
 
 if __name__ == "__main__":
-    print("\n=== Mesure de consommation énergétique sur deux processus ===")
-    print("Saisis les informations demandées ci-dessous.\n")
-
-    # Ligne 1 : HistoRik
-    pid1 = int(input("PID de HistoRik : ").strip())
+    # HistoRik
+    pid1 = int(input("\n\n\nPID de HistoRik : ").strip())
     name1 = "HistoRik"
 
-    # Ligne 2 : autre process (nom + PID)
+    # Autre process (nom + PID)
     raw = input("Nom et PID du processus de comparaison (ex: Notepad 25004) : ").strip().split()
     if len(raw) < 2:
-        print("Erreur : tu dois saisir le nom et le PID séparés par un espace.")
+        print("Erreur : tu dois saisir le nom et le PID séparés par un espace")
         exit(1)
     name2 = raw[0]
     pid2 = int(raw[1])
 
-    # Durée et intervalle (facultatif)
-    duration = input("Durée de la mesure (s, défaut 60) : ").strip()
-    interval = input("Pas d'échantillonnage (s, défaut 1.0) : ").strip()
-    tdp = input("TDP CPU estimé (W, défaut 28.0) : ").strip()
+    # Durée et intervalle
+    duration = input("Durée de la mesure (s, défaut 30) : ").strip()
+    interval = 1.0
+    tdp = 28.0
 
-    duration = int(duration) if duration else 60
-    interval = float(interval) if interval else 1.0
-    tdp = float(tdp) if tdp else 28.0
+    duration = int(duration) if duration else 30
 
     monitor_two(pid1, pid2, name1, name2, duration, interval, tdp)

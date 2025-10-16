@@ -1,0 +1,10 @@
+# Fichiers Python temporaires
+__pycache__/
+*.pyc
+*.pyo
+
+# Histoires locales
+histoires/*.txt
+
+# Tests personnels
+test_save.py

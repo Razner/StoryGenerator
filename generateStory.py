@@ -3,6 +3,9 @@ from tkinter import ttk, messagebox
 import json
 import requests
 import threading
+from save_manager import SaveManager
+
+manager = SaveManager()
 
 def generate_story(prenom, age, style, duree, output_box, button):
     button.config(state="disabled")
@@ -44,6 +47,91 @@ def generate_story(prenom, age, style, duree, output_box, button):
             button.config(state="normal")
 
     threading.Thread(target=task, daemon=True).start()
+
+dernier_fichier = None
+
+def sauvegarder_histoire_ui(prenom, age, style, histoire):
+    global dernier_fichier
+    if not histoire.strip():
+        messagebox.showwarning("Attention", "Aucune histoire à sauvegarder !")
+        return
+    fichier = manager.sauvegarder_histoire(prenom, age, style, histoire)
+    dernier_fichier = fichier
+    messagebox.showinfo("Succès", f"Histoire sauvegardée : {fichier}")
+
+def voir_histoires_ui():
+    histoires = manager.lister_histoires()
+    if not histoires:
+        messagebox.showinfo("Histoires", "Aucune histoire sauvegardée.")
+        return
+
+    fenetre = tk.Toplevel()
+    fenetre.title("Histoires sauvegardées")
+    fenetre.geometry("500x400")
+
+    for i, h in enumerate(histoires):
+        ttk.Label(fenetre, text=h).grid(row=i, column=0, sticky="w", padx=5, pady=2)
+        ttk.Button(fenetre, text="Lire", command=lambda nom=h: lire_histoire_ui(nom)).grid(row=i, column=1, padx=5, pady=2)
+
+def lire_histoire_ui(nom):
+    texte = manager.lire_histoire(nom)
+    fenetre = tk.Toplevel()
+    fenetre.title(nom)
+    text_box = tk.Text(fenetre, wrap="word")
+    text_box.pack(expand=True, fill="both")
+    text_box.insert(tk.END, texte)
+
+
+
+def toggle_favoris_ui(fichier):
+    if not fichier or not fichier.strip():
+        messagebox.showwarning("Attention", "Aucune histoire à ajouter aux favoris !")
+        return
+    if fichier in manager.lister_favoris():
+        manager.retirer_favori(fichier)
+        messagebox.showinfo("Favoris", f"Retiré des favoris : {fichier}")
+    else:
+        manager.ajouter_favori(fichier)
+        messagebox.showinfo("Favoris", f"Ajouté aux favoris : {fichier}")
+
+def voir_favoris_ui():
+    favoris = manager.lister_favoris()
+    if not favoris:
+        messagebox.showinfo("Favoris", "Aucun favori pour le moment.")
+        return
+
+    fenetre = tk.Toplevel()
+    fenetre.title("Favoris")
+    fenetre.geometry("400x300")
+
+    # Scrollbar si beaucoup de favoris
+    canvas = tk.Canvas(fenetre)
+    scrollbar = ttk.Scrollbar(fenetre, orient="vertical", command=canvas.yview)
+    scrollable_frame = ttk.Frame(canvas)
+
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
+
+    # Ajouter chaque favori avec bouton Retirer
+    for i, fav in enumerate(favoris):
+        ttk.Label(scrollable_frame, text=fav, wraplength=250).grid(row=i, column=0, sticky="w", padx=5, pady=2)
+        ttk.Button(scrollable_frame, text="Retirer", command=lambda f=fav: retirer_favori_ui(f, fenetre)).grid(row=i, column=1, padx=5, pady=2)
+
+def retirer_favori_ui(fichier, fenetre):
+    manager.retirer_favori(fichier)
+    messagebox.showinfo("Favoris", f"Favori retiré : {fichier}")
+    fenetre.destroy()  # fermer la fenêtre
+    voir_favoris_ui()  # rouvrir pour mettre à jour
 
 
 def main():
@@ -106,6 +194,42 @@ def main():
         )
     )
     generate_button.grid(row=4, column=0, columnspan=2, pady=10)
+
+    save_button = ttk.Button(
+        frame,
+        text="Sauvegarder l'histoire",
+        command=lambda: sauvegarder_histoire_ui(
+            prenom_entry.get(),
+            age_spin.get(),
+            style_var.get(),
+            output_box.get(1.0, tk.END).strip()
+        )
+    )
+    save_button.grid(row=6, column=0, pady=5, sticky="ew")
+
+    voir_histoires_button = ttk.Button(
+        frame, 
+        text="Voir les histoires", 
+        command=voir_histoires_ui
+    )
+    voir_histoires_button.grid(row=8, column=0, columnspan=2, pady=5, sticky="ew")
+
+    favoris_button = ttk.Button(
+        frame,
+        text="Ajouter aux favoris",
+        command=lambda: toggle_favoris_ui(dernier_fichier)
+        
+    )
+    favoris_button.grid(row=6, column=1, pady=5, sticky="ew")
+
+    voir_favoris_button = ttk.Button(
+        frame,
+        text="Voir les favoris",
+        command=voir_favoris_ui
+    )   
+    voir_favoris_button.grid(row=7, column=0, columnspan=2, pady=5, sticky="ew")
+
+
 
     root.mainloop()
 

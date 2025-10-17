@@ -252,10 +252,6 @@ def main():
     )   
     voir_favoris_button.grid(row=7, column=0, columnspan=2, pady=5, sticky="ew")
 
-
-
-    root.mainloop()
-
     lire_button = ttk.Button(
         frame,
         text="Lire l'histoire",

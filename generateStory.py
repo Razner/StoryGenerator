@@ -9,6 +9,7 @@ import os
 
 manager = SaveManager()
 
+
 def generate_story(prenom, age, style, duree, output_box, button):
     button.config(state="disabled")
     output_box.delete(1.0, tk.END)
@@ -18,7 +19,7 @@ def generate_story(prenom, age, style, duree, output_box, button):
         prompt = f"""
         Écris une histoire **entièrement en français** pour une personne nommé {prenom}, âgé de {age} ans.
         Le style est {style}.
-        L’histoire doit durer environ {duree} minutes.
+        La lecture de l'histoire doit durer environ {duree} minutes et être adaptée à un jeune public.
         Garde un ton positif et imaginatif.
         N'écris rien en anglais.
         """
@@ -158,21 +159,55 @@ def main():
     root.geometry("600x500")
     root.resizable(False, False)
 
+ 
+    style = ttk.Style()
+    style.theme_use('clam')  
+
+    
+    bg_window = "#F0F8FF"  
+    bg_frame = "#D6F0FF"   
+    btn_color = "#FFB347"  
+    btn_hover = "#FFCC80"  
+    label_color = "#333333" 
+    text_bg = "#FFFFFF"     
+    text_fg = "#1F3A93"    
+
+
+    root.configure(bg=bg_window)
+
+    
+    style.configure("TFrame", background=bg_frame, borderwidth=0, relief="flat")
+    style.configure("TLabel", background=bg_frame, font=("Comic Sans MS", 12), foreground=label_color)
+
+    
+    style.configure("TButton",
+                    font=("Comic Sans MS", 12, "bold"),
+                    background=btn_color,
+                    foreground="white",
+                    padding=8,
+                    relief="raised")
+    style.map("TButton",
+              background=[('active', btn_hover)],
+              relief=[('pressed', 'sunken'), ('!pressed', 'raised')])
+
+
+    style.configure("TCombobox",
+                    font=("Comic Sans MS", 12),
+                    padding=5)
+
     frame = ttk.Frame(root, padding=20)
     frame.pack(fill=tk.BOTH, expand=True)
 
-    ttk.Label(frame, text="Prénom :").grid(row=0, column=0, sticky="w")
-    prenom_entry = ttk.Entry(frame, width=30)
+    ttk.Label(frame, text="Prénom de l'enfant :").grid(row=0, column=0, sticky="w")
+    prenom_entry = ttk.Entry(frame, width=30, font=("Comic Sans MS", 12))
     prenom_entry.grid(row=0, column=1, pady=5)
 
     ttk.Label(frame, text="Âge :").grid(row=1, column=0, sticky="w")
-    age_spin = ttk.Spinbox(frame, from_=2, to=15, width=5)
+    age_spin = ttk.Spinbox(frame, from_=2, to=15, width=5, font=("Comic Sans MS", 12))
     age_spin.grid(row=1, column=1, pady=5, sticky="w")
 
     ttk.Label(frame, text="Style d'histoire :").grid(row=2, column=0, sticky="w")
-
-    # --- Menu déroulant pour le style d’histoire ---
-    genres = [
+    genre = [
         "Genre de l'histoire : ",
         "magique",
         "aventure",
@@ -185,15 +220,16 @@ def main():
         "chevaliers et dragons",
         "voyage fantastique"
     ]
-    style_var = tk.StringVar(value=genres[0])
-    style_menu = ttk.Combobox(frame, textvariable=style_var, values=genres, state="readonly", width=27)
+    style_var = tk.StringVar(value=genre[0])
+    style_menu = ttk.Combobox(frame, textvariable=style_var, values=genre, state="readonly", width=27)
     style_menu.grid(row=2, column=1, pady=5, sticky="w")
 
     ttk.Label(frame, text="Durée (en minutes) :").grid(row=3, column=0, sticky="w")
-    duree_spin = ttk.Spinbox(frame, from_=1, to=20, width=5)
+    duree_spin = ttk.Spinbox(frame, from_=1, to=20, width=5, font=("Comic Sans MS", 12))
     duree_spin.grid(row=3, column=1, pady=5, sticky="w")
 
-    output_box = tk.Text(frame, wrap="word", height=15)
+    output_box = tk.Text(frame, wrap="word", height=15,
+                         bg=text_bg, fg=text_fg, font=("Comic Sans MS", 12), relief="solid", bd=2)
     output_box.grid(row=5, column=0, columnspan=2, pady=10, sticky="nsew")
 
     frame.rowconfigure(5, weight=1)

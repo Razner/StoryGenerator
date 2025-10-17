@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 import json
 import requests
 import threading
+from readStory import read_story
 from save_manager import SaveManager
 import os
 
@@ -15,11 +16,13 @@ def generate_story(prenom, age, style, duree, output_box, button):
 
     def task():
         prompt = f"""
-        Crée une histoire pour un enfant nommé {prenom}, âgé de {age} ans.
+        Écris une histoire **entièrement en français** pour une personne nommé {prenom}, âgé de {age} ans.
         Le style est {style}.
-        L’histoire doit durer environ {duree} minutes et être adaptée à un jeune public.
+        L’histoire doit durer environ {duree} minutes.
         Garde un ton positif et imaginatif.
+        N'écris rien en anglais.
         """
+
 
         try:
             response = requests.post(
@@ -151,14 +154,14 @@ def retirer_favori_ui(fichier, fenetre):
 
 def main():
     root = tk.Tk()
-    root.title("Générateur d'histoires pour enfants")
+    root.title("Générateur d'histoires")
     root.geometry("600x500")
     root.resizable(False, False)
 
     frame = ttk.Frame(root, padding=20)
     frame.pack(fill=tk.BOTH, expand=True)
 
-    ttk.Label(frame, text="Prénom de l'enfant :").grid(row=0, column=0, sticky="w")
+    ttk.Label(frame, text="Prénom :").grid(row=0, column=0, sticky="w")
     prenom_entry = ttk.Entry(frame, width=30)
     prenom_entry.grid(row=0, column=1, pady=5)
 
@@ -210,6 +213,11 @@ def main():
     )
     generate_button.grid(row=4, column=0, columnspan=2, pady=10)
 
+    # --- Bouton pour lire l'histoire ---
+    def lire_histoire():
+        story = output_box.get("1.0", tk.END).strip()
+        if story:
+            read_story(story)
     save_button = ttk.Button(
         frame,
         text="Sauvegarder l'histoire",
@@ -248,6 +256,33 @@ def main():
 
     root.mainloop()
 
+    lire_button = ttk.Button(
+        frame,
+        text="Lire l'histoire",
+        command=lire_histoire
+    )
+    lire_button.grid(row=6, column=0, columnspan=2, pady=5)
+
+    lire_button = ttk.Button(
+        frame,
+        text="Lire l'histoire",
+        command=lire_histoire
+    )
+    lire_button.grid(row=6, column=0, columnspan=2, pady=5)
+
+    # --- Bouton pour arrêter la lecture ---
+    def arreter_histoire():
+        from readStory import stop_reading
+        stop_reading()
+
+    arreter_button = ttk.Button(
+        frame,
+        text="Arrêter la lecture",
+        command=arreter_histoire
+    )
+    arreter_button.grid(row=7, column=0, columnspan=2, pady=5)
+
+    root.mainloop()
 
 if __name__ == "__main__":
     main()

@@ -40,10 +40,10 @@ HistoiRik est un **Proof of Concept (PoC)** qui démontre comment :
 | Module | Fichier | Description |
 |--------|----------|-------------|
 | 🧠 Génération d’histoire | `generateStory.py` | Utilise Ollama + Mistral pour créer l’histoire |
-| 🗣️ Lecture vocale | `tts.py` | Lecture locale de l’histoire via pyttsx3 |
-| 💻 Interface | `ui.py` (ou `app.py`) | Interface locale (Tkinter / Flask / Streamlit) |
-| 💾 Sauvegarde | `utils.py` | Sauvegarde en .txt/.pdf et gestion des favoris |
-| ⚙️ Lancement | `main.py` | Point d’entrée du projet |
+| 🗣️ Lecture vocale | `readStory.py` | Lecture locale de l’histoire via pyttsx3 |
+| 💻 Interface | `generateStory.py` | Interface locale (Tkinter / Flask / Streamlit) |
+| 💾 Sauvegarde | `save_manager.py` | Sauvegarde en .txt/.pdf et gestion des favoris |
+| ⚙️ Lancement | `generateStory.py` | Point d’entrée du projet |
 | 📚 Données | `stories/` | Contient les histoires générées |
 | ⭐ Favoris | `favoris.json` | Stocke les histoires marquées comme favorites |
 
@@ -88,3 +88,6 @@ python -m venv .venv
 source .venv/bin/activate  # Linux / macOS
 .venv\Scripts\activate     # Windows
 pip install -r requirements.txt
+
+# Installation de espeak :
+sudo apt install espeak

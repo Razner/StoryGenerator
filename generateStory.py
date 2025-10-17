@@ -198,7 +198,7 @@ def main():
     frame = ttk.Frame(root, padding=20)
     frame.pack(fill=tk.BOTH, expand=True)
 
-    ttk.Label(frame, text="Prénom de l'enfant :").grid(row=0, column=0, sticky="w")
+    ttk.Label(frame, text="Prénom :").grid(row=0, column=0, sticky="w")
     prenom_entry = ttk.Entry(frame, width=30, font=("Comic Sans MS", 12))
     prenom_entry.grid(row=0, column=1, pady=5)
 
@@ -287,6 +287,10 @@ def main():
         command=voir_favoris_ui
     )   
     voir_favoris_button.grid(row=7, column=0, columnspan=2, pady=5, sticky="ew")
+
+
+
+    root.mainloop()
 
     lire_button = ttk.Button(
         frame,

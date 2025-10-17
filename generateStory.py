@@ -247,72 +247,68 @@ def main():
             generate_button
         )
     )
-    generate_button.grid(row=4, column=0, columnspan=2, pady=10)
+        # --- Bouton pour générer ---
+    generate_button = ttk.Button(
+        frame,
+        text="Générer l'histoire",
+        command=lambda: generate_story(
+            prenom_entry.get(),
+            age_spin.get(),
+            style_var.get(),
+            duree_spin.get(),
+            output_box,
+            generate_button
+        )
+    )
+    generate_button.grid(row=4, column=0, columnspan=2, pady=10, sticky="ew")
 
-    # --- Bouton pour lire l'histoire ---
-    def lire_histoire():
-        story = output_box.get("1.0", tk.END).strip()
-        if story:
-            read_story(story)
+    # --- Boutons d’action sur l’histoire ---
+    lire_button = ttk.Button(
+        frame,
+        text="Lire l'histoire",
+        command=lambda: read_story(output_box.get("1.0", tk.END).strip())
+    )
+    lire_button.grid(row=6, column=0, pady=5, sticky="ew")
+
+    arreter_button = ttk.Button(
+        frame,
+        text="Arrêter la lecture",
+        command=lambda: __import__("readStory").stop_reading()
+    )
+    arreter_button.grid(row=6, column=1, pady=5, sticky="ew")
+
     save_button = ttk.Button(
         frame,
-        text="Sauvegarder l'histoire",
+        text="Sauvegarder",
         command=lambda: sauvegarder_histoire_ui(
             prenom_entry.get(),
             age_spin.get(),
             style_var.get(),
-            output_box.get(1.0, tk.END).strip()
+            output_box.get("1.0", tk.END).strip()
         )
     )
-    save_button.grid(row=6, column=0, pady=5, sticky="ew")
-
-    voir_histoires_button = ttk.Button(
-        frame, 
-        text="Voir les histoires", 
-        command=voir_histoires_ui
-    )
-    voir_histoires_button.grid(row=8, column=0, columnspan=2, pady=5, sticky="ew")
+    save_button.grid(row=7, column=0, pady=5, sticky="ew")
 
     favoris_button = ttk.Button(
         frame,
         text="Ajouter aux favoris",
         command=lambda: toggle_favoris_ui(dernier_fichier)
-        
     )
-    favoris_button.grid(row=6, column=1, pady=5, sticky="ew")
+    favoris_button.grid(row=7, column=1, pady=5, sticky="ew")
+
+    voir_histoires_button = ttk.Button(
+        frame,
+        text="Voir les histoires",
+        command=voir_histoires_ui
+    )
+    voir_histoires_button.grid(row=8, column=0, pady=5, sticky="ew")
 
     voir_favoris_button = ttk.Button(
         frame,
         text="Voir les favoris",
         command=voir_favoris_ui
-    )   
-    voir_favoris_button.grid(row=7, column=0, columnspan=2, pady=5, sticky="ew")
-
-    lire_button = ttk.Button(
-        frame,
-        text="Lire l'histoire",
-        command=lire_histoire
     )
-    lire_button.grid(row=6, column=0, columnspan=2, pady=5)
-
-    lire_button = ttk.Button(
-        frame,
-        text="Lire l'histoire",
-        command=lire_histoire
-    )
-    lire_button.grid(row=6, column=0, columnspan=2, pady=5)
-
-    # --- Bouton pour arrêter la lecture ---
-    def arreter_histoire():
-        from readStory import stop_reading
-        stop_reading()
-
-    arreter_button = ttk.Button(
-        frame,
-        text="Arrêter la lecture",
-        command=arreter_histoire
-    )
-    arreter_button.grid(row=7, column=0, columnspan=2, pady=5)
+    voir_favoris_button.grid(row=8, column=1, pady=5, sticky="ew")
 
     root.mainloop()
 

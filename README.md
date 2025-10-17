@@ -1,5 +1,6 @@
 # 📜 HistoiRik  
 par Salma Kacem, Simon Louis, Evan Guillet et Maxence Frappier
+
 HistoiRik est une application qui génère des histoires personnalisées pour enfants à partir des préférences de l’utilisateur : prénom, âge, univers, durée, ton, etc.
 
 L’histoire est ensuite racontée à voix haute grâce à un moteur TTS (Text-To-Speech) fonctionnant en local, puis affichée et sauvegardée sur la machine de l’utilisateur.
